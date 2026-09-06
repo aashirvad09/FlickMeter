@@ -1,131 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlickMeter - Public Movie Ratings & Buzz</title>
+  <title>FlickMeter - Indian Cinema Hub</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen">
 
-  <!-- Header -->
-  <header class="bg-gray-900/90 backdrop-blur sticky top-0 z-50 border-b border-gray-800 px-4 py-3">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
+<body class="bg-gray-950 text-gray-100 min-h-screen pb-12">
+
+  <header class="bg-gray-900/90 border-b border-gray-800 sticky top-0 z-30 backdrop-blur px-4 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-2">
         <i class="fa-solid fa-film text-red-500 text-2xl"></i>
-        <span class="text-2xl font-black tracking-wider text-white">FLICK<span class="text-red-500">METER</span></span>
+        <span class="text-xl font-black tracking-wider text-white">FLICK<span class="text-red-500">METER</span></span>
       </div>
-      <div class="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full font-semibold">
-        Live Public Verdict
-      </div>
+      <span class="text-xs bg-red-950/80 text-red-400 border border-red-800 px-2.5 py-1 rounded-full font-medium">
+        Public Reviews
+      </span>
     </div>
   </header>
 
-  <!-- Main Feed -->
-  <main class="max-w-6xl mx-auto px-4 py-6">
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-      <div>
-        <h1 class="text-2xl font-bold tracking-tight text-white">Trending Movies</h1>
-        <p class="text-sm text-gray-400">Rate karein aur apna verdict share karein.</p>
-      </div>
+  <main class="max-w-5xl mx-auto px-4 py-6">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-white">Trending Movies</h1>
+      <p class="text-xs text-gray-400 mt-1">Apna score rate karein aur audience reviews padhein.</p>
     </div>
 
-    <!-- Movies Grid -->
-    <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div class="text-gray-400 text-sm col-span-full text-center py-10">
+    <div id="moviesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div class="col-span-full text-center py-16 text-gray-400 text-sm">
         <i class="fa-solid fa-circle-notch fa-spin text-red-500 text-2xl mb-2"></i>
-        <p>Posters aur movies load ho rahi hain...</p>
+        <p>Posters aur reviews load ho rahe hain...</p>
       </div>
     </div>
   </main>
 
+  <div id="reviewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-3">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md p-4 text-left shadow-2xl">
+      <div class="flex justify-between items-center mb-3">
+        <h3 id="modalTitle" class="font-bold text-white text-sm truncate pr-2">Movie Reviews</h3>
+        <button onclick="closeReviewModal()" class="text-gray-400 hover:text-white text-lg p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="commentsContainer" class="max-h-52 overflow-y-auto space-y-2 mb-4 pr-1 text-xs">
+        </div>
+
+      <div class="space-y-2 pt-2 border-t border-gray-800">
+        <input id="commentAuthor" type="text" placeholder="Aapka Naam" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-red-500" />
+        <textarea id="commentBody" rows="2" placeholder="Apna review likhein..." class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-red-500"></textarea>
+        <button onclick="submitReview()" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg text-xs transition">
+          Review Post Karein
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const API_KEY = '262cd1fa3f94f895e3ad51718dcced7f';
-    const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
+    const API_KEY = "trilogy";
 
-    async function loadMovies() {
-      const grid = document.getElementById('moviesGrid');
-      const targetUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
-      
-      // Free CORS proxy to bypass Indian ISP block
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+    const initialMovies = [
+      "Stree 2",
+      "Jawan",
+      "Animal",
+      "12th Fail",
+      "Kantara",
+      "Pushpa: The Rise",
+      "K.G.F: Chapter 2",
+      "Dangal"
+    ];
 
+    let currentMovieId = null;
+
+    async function getMovie(title) {
       try {
-        let response;
-        try {
-          response = await fetch(targetUrl);
-          if (!response.ok) throw new Error();
-        } catch (e) {
-          response = await fetch(proxyUrl);
-        }
-
-        const data = await response.json();
-        const movies = data.results || [];
-
-        if (movies.length === 0) throw new Error("No movies found");
-
-        grid.innerHTML = '';
-
-        movies.forEach(movie => {
-          const savedRating = localStorage.getItem(`rating_${movie.id}`) || 'Not Rated';
-          const poster = movie.poster_path ? `${IMAGE_BASE}${movie.poster_path}` : 'https://placehold.co/500x750/1f2937/white?text=No+Poster';
-
-          const card = document.createElement('div');
-          card.className = 'bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col justify-between shadow-lg hover:border-gray-700 transition';
-
-          card.innerHTML = `
-            <div>
-              <div class="relative">
-                <img src="${poster}" alt="${movie.title}" class="w-full h-64 object-cover" loading="lazy">
-                <span class="absolute top-2 right-2 bg-black/85 text-amber-400 text-xs px-2 py-0.5 rounded-md font-bold shadow">
-                  ★ ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
-                </span>
-              </div>
-              <div class="p-3">
-                <h3 class="font-bold text-sm text-white truncate" title="${movie.title}">${movie.title}</h3>
-                <p class="text-xs text-gray-400 mt-1">${movie.release_date ? movie.release_date.split('-')[0] : '2026'}</p>
-              </div>
-            </div>
-            
-            <div class="p-3 pt-0 border-t border-gray-800/80 mt-2">
-              <div class="text-[11px] text-gray-400 mb-1 flex justify-between">
-                <span>Public Score:</span>
-                <span id="score-text-${movie.id}" class="text-red-400 font-bold">${savedRating}</span>
-              </div>
-              <div class="flex items-center space-x-1">
-                <select id="select-${movie.id}" class="w-full bg-gray-800 text-xs text-gray-200 border border-gray-700 rounded px-1.5 py-1 outline-none">
-                  <option value="">Rate (1-10)</option>
-                  ${[1,2,3,4,5,6,7,8,9,10].map(num => `<option value="${num}">★ ${num}/10</option>`).join('')}
-                </select>
-                <button onclick="saveRating(${movie.id})" class="bg-red-600 hover:bg-red-700 text-white text-xs px-2.5 py-1 rounded font-semibold transition">
-                  Save
-                </button>
-              </div>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-      } catch (error) {
-        grid.innerHTML = `
-          <div class="text-center col-span-full py-10">
-            <p class="text-red-400 text-sm mb-2">Network block ki wajah se movies load nahi ho payi.</p>
-            <button onclick="loadMovies()" class="bg-gray-800 text-xs px-3 py-1.5 rounded border border-gray-700 text-white hover:bg-gray-700">Retry Karein</button>
-          </div>
-        `;
+        const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${API_KEY}`);
+        const data = await res.json();
+        return data.Response === "True" ? data : null;
+      } catch (err) {
+        return null;
       }
     }
 
-    function saveRating(movieId) {
-      const select = document.getElementById(`select-${movieId}`);
-      const val = select.value;
-      if (!val) return;
-      localStorage.setItem(`rating_${movieId}`, `★ ${val}/10`);
-      document.getElementById(`score-text-${movieId}`).innerText = `★ ${val}/10`;
+    async function renderGrid() {
+      const container = document.getElementById("moviesContainer");
+      container.innerHTML = "";
+
+      for (const title of initialMovies) {
+        const movie = await getMovie(title);
+        if (!movie) continue;
+
+        const posterSrc = (movie.Poster && movie.Poster !== "N/A") 
+          ? movie.Poster 
+          : `https://placehold.co/400x600/1f2937/white?text=${encodeURIComponent(movie.Title)}`;
+
+        const userScore = localStorage.getItem(`score_${movie.imdbID}`) || "Not Rated";
+
+        const card = document.createElement("div");
+        card.className = "bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col justify-between shadow-lg";
+
+        card.innerHTML = `
+          <div>
+            <div class="relative bg-gray-800 aspect-[2/3]">
+              <img src="${posterSrc}" alt="${movie.Title}" class="w-full h-full object-cover">
+              <span class="absolute top-2 right-2 bg-black/80 text-amber-400 text-xs px-2 py-0.5 rounded font-bold">
+                ★ ${movie.imdbRating !== "N/A" ? movie.imdbRating : "N/A"}
+              </span>
+            </div>
+            <div class="p-3">
+              <span class="text-[10px] text-red-400 font-bold uppercase tracking-wider">${movie.Genre ? movie.Genre.split(',')[0] : 'Movie'}</span>
+              <h2 class="font-bold text-sm text-white truncate" title="${movie.Title}">${movie.Title}</h2>
+              <p class="text-[11px] text-gray-400">${movie.Year}</p>
+            </div>
+          </div>
+
+          <div class="p-3 pt-0 space-y-2 border-t border-gray-800/80 mt-1">
+            <div class="flex items-center justify-between text-[11px] text-gray-400">
+              <span>User Score:</span>
+              <span id="score-display-${movie.imdbID}" class="text-red-400 font-bold">${userScore}</span>
+            </div>
+
+            <div class="flex space-x-1">
+              <select id="rate-picker-${movie.imdbID}" class="w-full bg-gray-800 text-xs text-white border border-gray-700 rounded px-1.5 py-1 outline-none">
+                <option value="">Rate</option>
+                ${[10,9,8,7,6,5,4,3,2,1].map(n => `<option value="${n}">★ ${n}</option>`).join('')}
+              </select>
+              <button onclick="recordRating('${movie.imdbID}')" class="bg-red-600 hover:bg-red-700 text-white text-xs px-2.5 py-1 rounded font-semibold">
+                Save
+              </button>
+            </div>
+
+            <button onclick="openReviewModal('${movie.imdbID}', '${movie.Title.replace(/'/g, "\\'")}')" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs py-1.5 rounded flex items-center justify-center gap-1 transition">
+              <i class="fa-regular fa-comment-dots"></i> Reviews
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      }
     }
 
-    loadMovies();
+    // Rating Logic
+    function recordRating(imdbId) {
+      const picker = document.getElementById(`rate-picker-${imdbId}`);
+      const val = picker.value;
+      if (!val) return;
+      localStorage.setItem(`score_${imdbId}`, `★ ${val}/10`);
+      document.getElementById(`score-display-${imdbId}`).innerText = `★ ${val}/10`;
+    }
+
+    // Modal & Review Logic
+    function openReviewModal(imdbId, title) {
+      currentMovieId = imdbId;
+      document.getElementById("modalTitle").innerText = `${title} Reviews`;
+      document.getElementById("reviewModal").classList.remove("hidden");
+      displayReviews(imdbId);
+    }
+
+    function closeReviewModal() {
+      document.getElementById("reviewModal").classList.add("hidden");
+    }
+
+    function displayReviews(imdbId) {
+      const container = document.getElementById("commentsContainer");
+      const list = JSON.parse(localStorage.getItem(`reviews_${imdbId}`) || "[]");
+
+      if (list.length === 0) {
+        container.innerHTML = `<p class="text-gray-500 text-center py-6">Abhi tak koi review nahi aaya. Aap pehla review likhein!</p>`;
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div class="bg-gray-800/60 border border-gray-700/50 p-2.5 rounded-lg">
+          <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+            <span class="font-bold text-white">${item.name}</span>
+            <span>${item.date}</span>
+          </div>
+          <p class="text-gray-300 text-xs">${item.text}</p>
+        </div>
+      `).join('');
+    }
+
+    function submitReview() {
+      const authorInput = document.getElementById("commentAuthor");
+      const bodyInput = document.getElementById("commentBody");
+
+      const author = authorInput.value.trim() || "Cinema Lover";
+      const body = bodyInput.value.trim();
+
+      if (!body) return;
+
+      const list = JSON.parse(localStorage.getItem(`reviews_${currentMovieId}`) || "[]");
+      list.unshift({
+        name: author,
+        text: body,
+        date: "Abhi-abhi"
+      });
+
+      localStorage.setItem(`reviews_${currentMovieId}`, JSON.stringify(list));
+      bodyInput.value = "";
+      displayReviews(currentMovieId);
+    }
+
+    renderGrid();
   </script>
+
 </body>
 </html>
-
