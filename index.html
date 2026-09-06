@@ -153,9 +153,31 @@
           <span>Subscribe to GenreFlick</span>
         </a>
       </div>
+            <!-- Legal Links for AdSense Approval -->
+                  <div class="flex items-center justify-center space-x-4 text-[11px] text-gray-400 pt-2">
+                          <button onclick="openPolicyModal('about')" class="hover:text-white transition">About Us</button>
+                                  <span>•</span>
+                                          <button onclick="openPolicyModal('privacy')" class="hover:text-white transition">Privacy Policy</button>
+                                                  <span>•</span>
+                                                          <button onclick="openPolicyModal('terms')" class="hover:text-white transition">Terms of Service</button>
+                                                                </div>
+                                                            
       <p class="text-[10px] text-gray-600 pt-2">© FlickMeter & GenreFlick. All rights reserved.</p>
     </div>
   </footer>
+    <!-- POLICY MODAL -->
+      <div id="policyModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+          <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-lg p-5 text-left shadow-2xl max-h-[80vh] flex flex-col">
+                <div class="flex justify-between items-center pb-3 border-b border-gray-800">
+                        <h3 id="policyModalTitle" class="font-bold text-white text-base">Policy</h3>
+                                <button onclick="closePolicyModal()" class="text-gray-400 hover:text-white text-lg p-1">
+                                          <i class="fa-solid fa-xmark"></i>
+                                                  </button>
+                                                        </div>
+                                                              <div id="policyModalBody" class="overflow-y-auto py-3 text-xs text-gray-300 leading-relaxed space-y-2 pr-1"></div>
+                                                                  </div>
+                                                                    </div>
+                                                                    
 
   <!-- REVIEWS MODAL -->
   <div id="reviewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-3">
@@ -205,7 +227,47 @@
       { title: "Stranger Things", type: "Series" },
       { title: "Breaking Bad", type: "Series" }
     ];
+    const policyTexts = {
+              about: {
+                      title: "About FlickMeter & GenreFlick",
+                              content: `
+                                        <p><strong>FlickMeter</strong> is an independent digital aggregator and movie catalog platform created for cinema enthusiasts. Our mission is to provide accurate metadata, user ratings, and genuine community reviews for Bollywood, Hollywood, and Indian regional entertainment.</p>
+                                                  <p class="pt-2">In partnership with the <strong>GenreFlick</strong> YouTube channel, we bring you weekly analysis, cinema breakdowns, and updates across streaming platforms.</p>
+                                                            <p class="pt-2"><strong>Contact:</strong> For business, feedback, or DMCA inquiries, connect with us through the official GenreFlick YouTube channel.</p>
+                                                                    `
+                                                                          },
+                                                                                privacy: {
+                                                                                        title: "Privacy Policy",
+                                                                                                content: `
+                                                                                                          <p><strong>Effective Date:</strong> 2026</p>
+                                                                                                                    <p class="pt-1">At FlickMeter, accessible from our official domain, user privacy is of paramount importance. This document outlines the types of information collected and how we use it.</p>
+                                                                                                                              <p class="pt-2"><strong>Information We Collect:</strong> When you post a review, your submitted display name and commentary are stored securely on our database. We do not sell, rent, or share personal identifying information with third parties.</p>
+                                                                                                                                        <p class="pt-2"><strong>Cookies & Web Beacons:</strong> FlickMeter may use standard browser storage (localStorage) to remember your local ratings. Third-party vendors, including Google AdSense, may use cookies to serve ads based on user visits.</p>
+                                                                                                                                                `
+                                                                                                                                                      },
+                                                                                                                                                            terms: {
+                                                                                                                                                                    title: "Terms of Service",
+                                                                                                                                                                            content: `
+                                                                                                                                                                                      <p>By accessing FlickMeter, you agree to comply with our terms of service.</p>
+                                                                                                                                                                                                <p class="pt-2"><strong>Content Disclaimer:</strong> FlickMeter does not host, stream, or distribute full copyrighted video files or pirated downloads. All movie posters, titles, and release details are sourced via legal open APIs for review and educational commentary under fair use principles.</p>
+                                                                                                                                                                                                          <p class="pt-2"><strong>User Conduct:</strong> Any abuse, vulgarity, or spam submitted via community reviews will be moderated and removed without prior notice.</p>
+                                                                                                                                                                                                                  `
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                            };
 
+                                                                                                                                                                                                                                function openPolicyModal(type) {
+                                                                                                                                                                                                                                      const data = policyTexts[type];
+                                                                                                                                                                                                                                            if (!data) return;
+                                                                                                                                                                                                                                                  document.getElementById("policyModalTitle").innerText = data.title;
+                                                                                                                                                                                                                                                        document.getElementById("policyModalBody").innerHTML = data.content;
+                                                                                                                                                                                                                                                              document.getElementById("policyModal").classList.remove("hidden");
+                                                                                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                                                                                      function closePolicyModal() {
+                                                                                                                                                                                                                                                                            document.getElementById("policyModal").classList.add("hidden");
+                                                                                                                                                                                                                                                                                }
+
+    
     const starsData = [
       { name: "Shah Rukh Khan", title: "King of Bollywood", hits: "Jawan, Pathaan, DDLJ", img: "https://placehold.co/200x200/1e293b/white?text=SRK" },
       { name: "Shraddha Kapoor", title: "Stree Sensation", hits: "Stree 2, Chhichhore", img: "https://placehold.co/200x200/1e293b/white?text=Shraddha" },
