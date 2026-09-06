@@ -54,12 +54,7 @@
       </div>
 
       <!-- Genre Pills -->
-      <div class="flex items-center space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
-        <button onclick="filterByGenre('All')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap">All</button>
-        <button onclick="filterByGenre('Comedy')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Comedy</button>
-        <button onclick="filterByGenre('Action')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Action</button>
-        <button onclick="filterByGenre('Drama')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Drama</button>
-      </div>
+      
 
       <!-- Movies Grid -->
       <div id="moviesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -69,7 +64,14 @@
         </div>
       </div>
     </section>
-
+      <!-- Category Pills -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
+                    <button onclick="filterContent('All')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap">All</button>
+                            <button onclick="filterContent('Bollywood')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Bollywood</button>
+                                    <button onclick="filterContent('Hollywood')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Hollywood</button>
+                                            <button onclick="filterContent('Series')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Web Series</button>
+                                                  </div>
+                                                  
     <!-- TAB 2: TOP CHARTS -->
     <section id="section-ranking" class="hidden">
       <div class="mb-4">
@@ -156,28 +158,66 @@
     const SUPABASE_URL = "https://kqhasyaydjlheustrbki.supabase.co/rest/v1";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxaGFzeWF5ZGpsaGV1c3RyYmtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2OTg3MDQsImV4cCI6MjEwNDI3NDcwNH0.6VgX-ymtMt7hVF-jhoRhvKDqJ9TyfqwJcKoXumdNDFo";
 
-    const movieTitles = [
-      "Avengers: Endgame",
-      "Kalamkaval",
-      "Avengers Assemble",
-      "Maharaja",
-      "Captain America: The Winter Soldier",
-      "Captain America: Brave New World",
-      "Stree 2",
-      "Jawan",
-      "Animal",
-      "12th Fail",
-      "Kantara",
-      "Pushpa: The Rise",
-      "K.G.F: Chapter 2",
-      "Dangal",
-      "Pathaan",
-      "RRR",
-      "Shershaah",
-      "Drishyam 2",
-      "Gadar 2",
-      "Tumbbad"
-    ];
+      const curatedContent = [
+              // Bollywood Movies
+                    { title: "Stree 2", type: "Bollywood" },
+                          { title: "Jawan", type: "Bollywood" },
+                                { title: "Animal", type: "Bollywood" },
+                                      { title: "12th Fail", type: "Bollywood" },
+                                            { title: "Dangal", type: "Bollywood" },
+
+                                                  // Hollywood Movies
+                                                        { title: "Oppenheimer", type: "Hollywood" },
+                                                              { title: "Inception", type: "Hollywood" },
+                                                                    { title: "Interstellar", type: "Hollywood" },
+                                                                          { title: "The Dark Knight", type: "Hollywood" },
+                                                                                { title: "Avengers: Endgame", type: "Hollywood" },
+
+                                                                                      // Web Series / TV Shows
+                                                                                            { title: "Mirzapur", type: "Series" },
+                                                                                                  { title: "Panchayat", type: "Series" },
+                                                                                                        { title: "Sacred Games", type: "Series" },
+                                                                                                              { title: "Stranger Things", type: "Series" },
+                                                                                                                    { title: "Breaking Bad", type: "Series" }
+                                                                                                                        ];
+
+                                                                                                                            async function fetchAllMovies() {
+                                                                                                                                  const promises = curatedContent.map(item => 
+                                                                                                                                          fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(item.title)}&apikey=${API_KEY}`)
+                                                                                                                                                    .then(res => res.json())
+                                                                                                                                                              .then(data => {
+                                                                                                                                                                          if (data.Response === "True") {
+                                                                                                                                                                                        data.category = item.type;
+                                                                                                                                                                                                      return data;
+                                                                                                                                                                                                                  }
+                                                                                                                                                                                                                              return null;
+                                                                                                                                                                                                                                        })
+                                                                                                                                                                                                                                                  .catch(() => null)
+                                                                                                                                                                                                                                                        );
+
+                                                                                                                                                                                                                                                              const results = await Promise.all(promises);
+                                                                                                                                                                                                                                                                    cachedMovies = results.filter(m => m !== null);
+                                                                                                                                                                                                                                                                          renderMovies(cachedMovies);
+                                                                                                                                                                                                                                                                              }
+
+                                                                                                                                                                                                                                                                                  function filterContent(category) {
+                                                                                                                                                                                                                                                                                        document.querySelectorAll('.cat-pill').forEach(btn => {
+                                                                                                                                                                                                                                                                                                if (btn.innerText.trim() === (category === 'Series' ? 'Web Series' : category)) {
+                                                                                                                                                                                                                                                                                                          btn.className = 'cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap';
+                                                                                                                                                                                                                                                                                                                  } else {
+                                                                                                                                                                                                                                                                                                                            btn.className = 'cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap';
+                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                          });
+
+                                                                                                                                                                                                                                                                                                                                                if (category === 'All') {
+                                                                                                                                                                                                                                                                                                                                                        renderMovies(cachedMovies);
+                                                                                                                                                                                                                                                                                                                                                              } else {
+                                                                                                                                                                                                                                                                                                                                                                      const filtered = cachedMovies.filter(m => m.category === category);
+                                                                                                                                                                                                                                                                                                                                                                              renderMovies(filtered);
+                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                        }
+
+      
 
     const starsData = [
       { name: "Shah Rukh Khan", title: "King of Bollywood", hits: "Jawan, Pathaan, DDLJ", img: "https://placehold.co/200x200/1e293b/white?text=SRK" },
