@@ -202,7 +202,7 @@
       const container = document.getElementById("moviesContainer");
       container.innerHTML = "";
 
-      list.forEach(movie => {
+      list.forEach(movie {
         const poster = (movie.Poster && movie.Poster !== "N/A") ? movie.Poster : `https://placehold.co/400x600/1f2937/white?text=${encodeURIComponent(movie.Title)}`;
         const userScore = localStorage.getItem(`score_${movie.imdbID}`) || "Not Rated";
 
