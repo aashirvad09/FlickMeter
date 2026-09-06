@@ -3,139 +3,165 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlickMeter - Indian Cinema Hub</title>
+  <title>FlickMeter - Movies & Web Series Hub</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
-<body class="bg-gray-950 text-gray-100 min-h-screen pb-12">
+<body class="bg-gray-950 text-gray-100 min-h-screen pb-12 flex flex-col justify-between">
 
-  <!-- NAVBAR -->
-  <header class="bg-gray-900/95 border-b border-gray-800 sticky top-0 z-30 backdrop-blur px-4 py-3">
-    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-film text-red-500 text-2xl"></i>
-        <span class="text-xl font-black tracking-wider text-white">FLICK<span class="text-red-500">METER</span></span>
+  <div>
+    <!-- NAVBAR -->
+    <header class="bg-gray-900/95 border-b border-gray-800 sticky top-0 z-30 backdrop-blur px-4 py-3">
+      <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+        
+        <div class="flex items-center justify-between w-full sm:w-auto">
+          <!-- Logo -->
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-film text-red-500 text-2xl"></i>
+            <span class="text-xl font-black tracking-wider text-white">FLICK<span class="text-red-500">METER</span></span>
+          </div>
+
+          <!-- YouTube Button (Mobile) -->
+          <a 
+            href="https://youtube.com/@genreflickofficial?si=c6N6PHpGuobNU771" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="sm:hidden flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow transition">
+            <i class="fa-brands fa-youtube text-sm"></i>
+            <span>YouTube</span>
+          </a>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Navigation Tabs -->
+          <nav class="flex space-x-1.5 text-xs font-semibold">
+            <button onclick="switchTab('feed')" id="nav-feed" class="px-3 py-1.5 rounded-full bg-red-600 text-white transition">Explore</button>
+            <button onclick="switchTab('ranking')" id="nav-ranking" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">Top Charts</button>
+            <button onclick="switchTab('stars')" id="nav-stars" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">Stars</button>
+            <button onclick="switchTab('news')" id="nav-news" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">News</button>
+          </nav>
+
+          <!-- YouTube Button (Desktop) -->
+          <a 
+            href="https://youtube.com/@genreflickofficial?si=c6N6PHpGuobNU771" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="hidden sm:flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow transition">
+            <i class="fa-brands fa-youtube text-sm"></i>
+            <span>GenreFlick</span>
+          </a>
+        </div>
       </div>
+    </header>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex space-x-1.5 text-xs font-semibold">
-        <button onclick="switchTab('feed')" id="nav-feed" class="px-3 py-1.5 rounded-full bg-red-600 text-white transition">Movies</button>
-        <button onclick="switchTab('ranking')" id="nav-ranking" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">Top Charts</button>
-        <button onclick="switchTab('stars')" id="nav-stars" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">Stars</button>
-        <button onclick="switchTab('news')" id="nav-news" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">News</button>
-      </nav>
+    <main class="max-w-5xl mx-auto px-4 py-6">
+
+      <!-- TAB 1: CONTENT FEED -->
+      <section id="section-feed">
+        
+        <!-- Live Search Bar -->
+        <div class="mb-5">
+          <div class="relative flex items-center">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 text-gray-500 text-xs"></i>
+            <input 
+              type="text" 
+              id="movieSearchInput" 
+              placeholder="Movie ya Web Series search karein (e.g. Mirzapur, Inception, Animal)..." 
+              class="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-24 py-2.5 text-xs text-white placeholder-gray-500 outline-none focus:border-red-500 transition shadow"
+              onkeydown="if(event.key === 'Enter') executeSearch()"
+            />
+            <button 
+              onclick="executeSearch()" 
+              class="absolute right-1.5 bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold transition">
+              Search
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="flex items-center space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
+          <button onclick="filterContent('All')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap">All</button>
+          <button onclick="filterContent('Bollywood')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Bollywood</button>
+          <button onclick="filterContent('Hollywood')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Hollywood</button>
+          <button onclick="filterContent('Series')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Web Series</button>
+        </div>
+
+        <!-- Movies & Series Grid -->
+        <div id="moviesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <div class="col-span-full text-center py-16 text-gray-400 text-sm">
+            <i class="fa-solid fa-circle-notch fa-spin text-red-500 text-2xl mb-2"></i>
+            <p>Title load ho rahe hain...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: TOP CHARTS -->
+      <section id="section-ranking" class="hidden">
+        <div class="mb-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-trophy text-amber-400"></i> Highest Rated Titles
+          </h2>
+          <p class="text-xs text-gray-400">IMDb rating ke aadhar par top ranked titles</p>
+        </div>
+        <div id="rankingContainer" class="space-y-3"></div>
+      </section>
+
+      <!-- TAB 3: POPULAR STARS -->
+      <section id="section-stars" class="hidden">
+        <div class="mb-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-star text-yellow-400"></i> Top Cinema Stars
+          </h2>
+          <p class="text-xs text-gray-400">Leading actors & creators</p>
+        </div>
+        <div id="starsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+      </section>
+
+      <!-- TAB 4: LATEST NEWS -->
+      <section id="section-news" class="hidden">
+        <div class="mb-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-newspaper text-red-500"></i> Cinema Buzz & Updates
+          </h2>
+          <p class="text-xs text-gray-400">Bollywood, Hollywood & Web Series ki taaza khabrein</p>
+        </div>
+        <div id="newsContainer" class="space-y-3"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- PROFESSIONAL FOOTER WITH YOUTUBE PROMOTION -->
+  <footer class="mt-12 border-t border-gray-800 bg-gray-900/60 py-8 px-4 text-center">
+    <div class="max-w-md mx-auto space-y-3">
+      <div class="flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-film text-red-500 text-xl"></i>
+        <span class="text-lg font-black text-white">FLICK<span class="text-red-500">METER</span></span>
+      </div>
+      <p class="text-xs text-gray-400">
+        Cinema reviews, ratings & OTT release updates. Hamare official YouTube channel ko subscribe karein!
+      </p>
+      <div>
+        <a 
+          href="https://youtube.com/@genreflickofficial?si=c6N6PHpGuobNU771" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-lg">
+          <i class="fa-brands fa-youtube text-base"></i>
+          <span>Subscribe to GenreFlick</span>
+        </a>
+      </div>
+      <p class="text-[10px] text-gray-600 pt-2">© FlickMeter & GenreFlick. All rights reserved.</p>
     </div>
-  </header>
-
-  <main class="max-w-5xl mx-auto px-4 py-6">
-
-    <!-- TAB 1: MOVIES FEED -->
-    <section id="section-feed">
-      
-      <!-- Live Search Bar -->
-      <div class="mb-5">
-        <div class="relative flex items-center">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 text-gray-500 text-xs"></i>
-          <input 
-            type="text" 
-            id="movieSearchInput" 
-            placeholder="Koi bhi movie search karein (e.g. Dangal, Batman, Pathaan)..." 
-            class="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-24 py-2.5 text-xs text-white placeholder-gray-500 outline-none focus:border-red-500 transition shadow"
-            onkeydown="if(event.key === 'Enter') executeSearch()"
-          />
-          <button 
-            onclick="executeSearch()" 
-            class="absolute right-1.5 bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold transition">
-            Search
-          </button>
-        </div>
-      </div>
-
-      <!-- Genre Pills -->
-      
-
-      <!-- Movies Grid -->
-      <div id="moviesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        <div class="col-span-full text-center py-16 text-gray-400 text-sm">
-          <i class="fa-solid fa-circle-notch fa-spin text-red-500 text-2xl mb-2"></i>
-          <p>Movies load ho rahi hain...</p>
-        </div>
-      </div>
-    </section>
-      <!-- Category Pills -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
-                    <button onclick="filterContent('All')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap">All</button>
-                            <button onclick="filterContent('Bollywood')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Bollywood</button>
-                                    <button onclick="filterContent('Hollywood')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Hollywood</button>
-                                            <button onclick="filterContent('Series')" class="cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Web Series</button>
-                                                  </div>
-                                                  
-    <!-- TAB 2: TOP CHARTS -->
-    <section id="section-ranking" class="hidden">
-      <div class="mb-4">
-        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-trophy text-amber-400"></i> Overall Top Rated Movies
-        </h2>
-        <p class="text-xs text-gray-400">IMDb rating ke aadhar par top ranked movies</p>
-      </div>
-      <div id="rankingContainer" class="space-y-3"></div>
-    </section>
-
-    <!-- TAB 3: POPULAR STARS -->
-    <section id="section-stars" class="hidden">
-      <div class="mb-4">
-        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-star text-yellow-400"></i> Top Indian Stars
-        </h2>
-        <p class="text-xs text-gray-400">Leading actors & actresses of Indian cinema</p>
-      </div>
-      <div id="starsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-    </section>
-
-    <!-- TAB 4: LATEST NEWS -->
-    <section id="section-news" class="hidden">
-      <div class="mb-4">
-        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-newspaper text-red-500"></i> Cinema Buzz & Updates
-        </h2>
-        <p class="text-xs text-gray-400">Bollywood, South & Hindi Cinema ki taaza khabrein</p>
-      </div>
-      <div id="newsContainer" class="space-y-3"></div>
-    </section>
-
-  </main>
-    <!-- YOUTUBE & FOOTER SECTION -->
-      <footer class="mt-12 border-t border-gray-800 bg-gray-900/60 py-8 px-4 text-center">
-          <div class="max-w-md mx-auto space-y-3">
-                <div class="flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-film text-red-500 text-xl"></i>
-                                <span class="text-lg font-black text-white">FLICK<span class="text-red-500">METER</span></span>
-                                      </div>
-                                            <p class="text-xs text-gray-400">
-                                                    Cinema reviews, ratings & box office updates. Official YouTube channel ko subscribe karein!
-                                                          </p>
-                                                                <div>
-                                                                        <a 
-                                                                                  href="https://youtube.com/@genreflickofficial?si=c6N6PHpGuobNU771" 
-                                                                                            target="_blank" 
-                                                                                                      rel="noopener noreferrer"
-                                                                                                                class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-lg">
-                                                                                                                          <i class="fa-brands fa-youtube text-base"></i>
-                                                                                                                                    <span>Subscribe to GenreFlick</span>
-                                                                                                                                            </a>
-                                                                                                                                                  </div>
-                                                                                                                                                        <p class="text-[10px] text-gray-600 pt-2">© 2026 FlickMeter & GenreFlick</p>
-                                                                                                                                                            </div>
-                                                                                                                                                              </footer>
-                                                                                                                                                              
+  </footer>
 
   <!-- REVIEWS MODAL -->
   <div id="reviewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-3">
     <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md p-4 text-left shadow-2xl">
       <div class="flex justify-between items-center mb-3">
-        <h3 id="modalTitle" class="font-bold text-white text-sm truncate pr-2">Movie Reviews</h3>
+        <h3 id="modalTitle" class="font-bold text-white text-sm truncate pr-2">Reviews</h3>
         <button onclick="closeReviewModal()" class="text-gray-400 hover:text-white text-lg p-1">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -158,66 +184,27 @@
     const SUPABASE_URL = "https://kqhasyaydjlheustrbki.supabase.co/rest/v1";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxaGFzeWF5ZGpsaGV1c3RyYmtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2OTg3MDQsImV4cCI6MjEwNDI3NDcwNH0.6VgX-ymtMt7hVF-jhoRhvKDqJ9TyfqwJcKoXumdNDFo";
 
-      const curatedContent = [
-              // Bollywood Movies
-                    { title: "Stree 2", type: "Bollywood" },
-                          { title: "Jawan", type: "Bollywood" },
-                                { title: "Animal", type: "Bollywood" },
-                                      { title: "12th Fail", type: "Bollywood" },
-                                            { title: "Dangal", type: "Bollywood" },
+    const curatedContent = [
+      // Bollywood
+      { title: "Stree 2", type: "Bollywood" },
+      { title: "Jawan", type: "Bollywood" },
+      { title: "Animal", type: "Bollywood" },
+      { title: "12th Fail", type: "Bollywood" },
+      { title: "Dangal", type: "Bollywood" },
 
-                                                  // Hollywood Movies
-                                                        { title: "Oppenheimer", type: "Hollywood" },
-                                                              { title: "Inception", type: "Hollywood" },
-                                                                    { title: "Interstellar", type: "Hollywood" },
-                                                                          { title: "The Dark Knight", type: "Hollywood" },
-                                                                                { title: "Avengers: Endgame", type: "Hollywood" },
+      // Hollywood
+      { title: "Inception", type: "Hollywood" },
+      { title: "Interstellar", type: "Hollywood" },
+      { title: "The Dark Knight", type: "Hollywood" },
+      { title: "Avengers: Endgame", type: "Hollywood" },
 
-                                                                                      // Web Series / TV Shows
-                                                                                            { title: "Mirzapur", type: "Series" },
-                                                                                                  { title: "Panchayat", type: "Series" },
-                                                                                                        { title: "Sacred Games", type: "Series" },
-                                                                                                              { title: "Stranger Things", type: "Series" },
-                                                                                                                    { title: "Breaking Bad", type: "Series" }
-                                                                                                                        ];
-
-                                                                                                                            async function fetchAllMovies() {
-                                                                                                                                  const promises = curatedContent.map(item => 
-                                                                                                                                          fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(item.title)}&apikey=${API_KEY}`)
-                                                                                                                                                    .then(res => res.json())
-                                                                                                                                                              .then(data => {
-                                                                                                                                                                          if (data.Response === "True") {
-                                                                                                                                                                                        data.category = item.type;
-                                                                                                                                                                                                      return data;
-                                                                                                                                                                                                                  }
-                                                                                                                                                                                                                              return null;
-                                                                                                                                                                                                                                        })
-                                                                                                                                                                                                                                                  .catch(() => null)
-                                                                                                                                                                                                                                                        );
-
-                                                                                                                                                                                                                                                              const results = await Promise.all(promises);
-                                                                                                                                                                                                                                                                    cachedMovies = results.filter(m => m !== null);
-                                                                                                                                                                                                                                                                          renderMovies(cachedMovies);
-                                                                                                                                                                                                                                                                              }
-
-                                                                                                                                                                                                                                                                                  function filterContent(category) {
-                                                                                                                                                                                                                                                                                        document.querySelectorAll('.cat-pill').forEach(btn => {
-                                                                                                                                                                                                                                                                                                if (btn.innerText.trim() === (category === 'Series' ? 'Web Series' : category)) {
-                                                                                                                                                                                                                                                                                                          btn.className = 'cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap';
-                                                                                                                                                                                                                                                                                                                  } else {
-                                                                                                                                                                                                                                                                                                                            btn.className = 'cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap';
-                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                          });
-
-                                                                                                                                                                                                                                                                                                                                                if (category === 'All') {
-                                                                                                                                                                                                                                                                                                                                                        renderMovies(cachedMovies);
-                                                                                                                                                                                                                                                                                                                                                              } else {
-                                                                                                                                                                                                                                                                                                                                                                      const filtered = cachedMovies.filter(m => m.category === category);
-                                                                                                                                                                                                                                                                                                                                                                              renderMovies(filtered);
-                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                        }
-
-      
+      // Web Series
+      { title: "Mirzapur", type: "Series" },
+      { title: "Panchayat", type: "Series" },
+      { title: "Sacred Games", type: "Series" },
+      { title: "Stranger Things", type: "Series" },
+      { title: "Breaking Bad", type: "Series" }
+    ];
 
     const starsData = [
       { name: "Shah Rukh Khan", title: "King of Bollywood", hits: "Jawan, Pathaan, DDLJ", img: "https://placehold.co/200x200/1e293b/white?text=SRK" },
@@ -229,22 +216,40 @@
     const newsData = [
       { tag: "Box Office", title: "Stree 2 bani all-time blockbuster", desc: "Rajkummar Rao aur Shraddha Kapoor ki film ne banaye naye record.", time: "Today" },
       { tag: "Big Update", title: "KGF aur Salaar Universe", desc: "Prashanth Neel ne aage ke visual spectacles par kaam shuru kiya.", time: "Yesterday" },
-      { tag: "Production", title: "12th Fail ko mila sabse zyada pyaar", desc: "Vikrant Massey ki film IMDb par top-rated ban gayi.", time: "3 Days ago" }
+      { tag: "Series News", title: "Panchayat Season 4 Update", desc: "Phulera gram panchayat ki agli kahani par kaam tezi se shuru.", time: "3 Days ago" }
     ];
 
     let cachedMovies = [];
     let currentMovieId = null;
 
     async function fetchAllMovies() {
-      const promises = movieTitles.map(t => 
-        fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(t)}&apikey=${API_KEY}`)
-          .then(res => res.json())
-          .catch(() => null)
-      );
+      const container = document.getElementById("moviesContainer");
+      try {
+        const promises = curatedContent.map(async (item) => {
+          try {
+            const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(item.title)}&apikey=${API_KEY}`);
+            const data = await res.json();
+            if (data && data.Response === "True") {
+              data.category = item.type;
+              return data;
+            }
+          } catch (e) {
+            return null;
+          }
+          return null;
+        });
 
-      const results = await Promise.all(promises);
-      cachedMovies = results.filter(m => m && m.Response === "True");
-      renderMovies(cachedMovies);
+        const results = await Promise.all(promises);
+        cachedMovies = results.filter(m => m !== null);
+
+        if (cachedMovies.length > 0) {
+          renderMovies(cachedMovies);
+        } else {
+          container.innerHTML = `<p class="col-span-full text-center text-red-400 py-10 text-xs">Content load nahi ho paya. Page refresh karein.</p>`;
+        }
+      } catch (err) {
+        container.innerHTML = `<p class="col-span-full text-center text-red-400 py-10 text-xs">Data fetch karne me dikkat aayi.</p>`;
+      }
     }
 
     function renderMovies(list) {
@@ -252,13 +257,14 @@
       container.innerHTML = "";
 
       if (!list || list.length === 0) {
-        container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10 text-xs">Koi movie nahi mili.</p>`;
+        container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10 text-xs">Koi title nahi mila.</p>`;
         return;
       }
 
       list.forEach(movie => {
         const poster = (movie.Poster && movie.Poster !== "N/A") ? movie.Poster : `https://placehold.co/400x600/1f2937/white?text=${encodeURIComponent(movie.Title)}`;
         const userScore = localStorage.getItem(`score_${movie.imdbID}`) || "Not Rated";
+        const badgeTag = movie.category || (movie.Type === "series" ? "Series" : "Movie");
 
         const card = document.createElement("div");
         card.className = "bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col justify-between shadow-lg";
@@ -270,9 +276,12 @@
               <span class="absolute top-2 right-2 bg-black/80 text-amber-400 text-xs px-2 py-0.5 rounded font-bold">
                 ★ ${movie.imdbRating !== "N/A" ? movie.imdbRating : "N/A"}
               </span>
+              <span class="absolute top-2 left-2 bg-red-600/90 text-white text-[9px] font-bold uppercase px-1.5 py-0.5 rounded tracking-wide">
+                ${badgeTag}
+              </span>
             </div>
             <div class="p-3">
-              <span class="text-[10px] text-red-400 font-bold uppercase tracking-wider">${movie.Genre ? movie.Genre.split(',')[0] : 'Movie'}</span>
+              <span class="text-[10px] text-red-400 font-bold uppercase tracking-wider">${movie.Genre ? movie.Genre.split(',')[0] : 'Feature'}</span>
               <h2 class="font-bold text-sm text-white truncate" title="${movie.Title}">${movie.Title}</h2>
               <p class="text-[11px] text-gray-400">${movie.Year}</p>
             </div>
@@ -280,7 +289,7 @@
 
           <div class="p-3 pt-0 space-y-2 border-t border-gray-800/80 mt-1">
             <div class="flex items-center justify-between text-[11px] text-gray-400">
-              <span>User Score:</span>
+              <span>My Rating:</span>
               <span id="score-display-${movie.imdbID}" class="text-red-400 font-bold">${userScore}</span>
             </div>
 
@@ -335,7 +344,7 @@
         data = await res.json();
 
         if (data.Response === "True" && data.Search && data.Search.length > 0) {
-          const detailPromises = data.Search.slice(0, 4).map(item =>
+          const detailPromises = data.Search.slice(0, 6).map(item =>
             fetch(`https://www.omdbapi.com/?i=${item.imdbID}&apikey=${API_KEY}`)
               .then(r => r.json())
               .catch(() => null)
@@ -346,31 +355,32 @@
           container.innerHTML = `
             <div class="col-span-full text-center py-12 text-gray-400 text-xs space-y-2">
               <i class="fa-regular fa-face-frown text-red-500 text-2xl"></i>
-              <p class="text-red-400 font-semibold">"${query}" naam ki koi movie nahi mili.</p>
+              <p class="text-red-400 font-semibold">"${query}" nahi mila.</p>
               <button onclick="renderMovies(cachedMovies)" class="bg-gray-800 text-white px-3 py-1 rounded text-[11px] hover:bg-gray-700">
-                Wapas Saari Movies Dikhayein
+                Wapas Saare Titles Dikhayein
               </button>
             </div>
           `;
         }
       } catch (err) {
-        container.innerHTML = `<p class="col-span-full text-center text-red-400 py-10 text-xs">Network issue ke karan search nahi ho paya.</p>`;
+        container.innerHTML = `<p class="col-span-full text-center text-red-400 py-10 text-xs">Network issue ke karan search nahi chal paya.</p>`;
       }
     }
 
-    function filterByGenre(genre) {
-      document.querySelectorAll('.genre-pill').forEach(btn => {
-        if (btn.innerText.trim() === genre) {
-          btn.className = 'genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap';
+    function filterContent(category) {
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        const label = category === 'Series' ? 'Web Series' : category;
+        if (btn.innerText.trim() === label) {
+          btn.className = 'cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap';
         } else {
-          btn.className = 'genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap';
+          btn.className = 'cat-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap';
         }
       });
 
-      if (genre === 'All') {
+      if (category === 'All') {
         renderMovies(cachedMovies);
       } else {
-        const filtered = cachedMovies.filter(m => m.Genre && m.Genre.toLowerCase().includes(genre.toLowerCase()));
+        const filtered = cachedMovies.filter(m => m.category === category);
         renderMovies(filtered);
       }
     }
@@ -388,7 +398,7 @@
             <span class="text-base font-black ${idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-gray-300' : idx === 2 ? 'text-amber-600' : 'text-gray-500'} w-6">#${idx+1}</span>
             <div>
               <h4 class="text-sm font-bold text-white">${m.Title}</h4>
-              <p class="text-[11px] text-gray-400">${m.Genre ? m.Genre.split(',')[0] : 'Movie'} • ${m.Year}</p>
+              <p class="text-[11px] text-gray-400">${m.Genre ? m.Genre.split(',')[0] : 'Feature'} • ${m.Year}</p>
             </div>
           </div>
           <div class="text-right">
@@ -466,7 +476,7 @@
       document.getElementById("reviewModal").classList.add("hidden");
     }
 
-    // CLOUD REVIEWS (SUPABASE)
+    // SUPABASE CLOUD REVIEWS
     async function displayReviews(imdbId) {
       const container = document.getElementById("commentsContainer");
       container.innerHTML = `<p class="text-gray-400 text-center py-6 text-xs"><i class="fa-solid fa-spinner fa-spin text-red-500 mr-2"></i>Reviews load ho rahe hain...</p>`;
@@ -481,7 +491,7 @@
         const list = await res.json();
 
         if (!list || list.length === 0) {
-          container.innerHTML = `<p class="text-gray-500 text-center py-6">Abhi tak koi review nahi aaya. Aap pehla review likhein!</p>`;
+          container.innerHTML = `<p class="text-gray-500 text-center py-6">Abhi tak koi review nahi aaya. Pehla review aap likhein!</p>`;
           return;
         }
 
@@ -542,6 +552,7 @@
       }
     }
 
+    // Initial Load
     fetchAllMovies();
   </script>
 </body>
