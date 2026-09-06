@@ -191,7 +191,44 @@
                                                                   </div>
                                                                     </div>
                                                                     
-
+  <!-- MOVIE DETAILS & TRAILER MODAL -->
+    <div id="movieDetailsModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-lg p-5 text-left shadow-2xl max-h-[85vh] overflow-y-auto space-y-4">
+              <div class="flex justify-between items-start gap-2">
+                      <div>
+                                <span id="detailBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-red-600/80 text-white uppercase">Movie</span>
+                                          <h3 id="detailTitle" class="font-black text-xl text-white mt-1 leading-tight"></h3>
+                                                    <p id="detailMeta" class="text-xs text-gray-400 mt-0.5"></p>
+                                                            </div>
+                                                                    <button onclick="closeDetailsModal()" class="text-gray-400 hover:text-white text-xl p-1">
+                                                                              <i class="fa-solid fa-xmark"></i>
+                                                                                      </button>
+                                                                                            </div>
+                                                                                            
+                                                                                                  <div class="flex gap-4 items-start">
+                                                                                                          <img id="detailPoster" src="" alt="Poster" class="w-24 rounded-lg border border-gray-800 shrink-0 object-cover shadow" />
+                                                                                                                  <div class="space-y-1.5 text-xs text-gray-300">
+                                                                                                                            <p><strong>Director:</strong> <span id="detailDirector" class="text-gray-400"></span></p>
+                                                                                                                                      <p><strong>Cast:</strong> <span id="detailActors" class="text-gray-400"></span></p>
+                                                                                                                                                <p><strong>Genre:</strong> <span id="detailGenre" class="text-gray-400"></span></p>
+                                                                                                                                                          <p><strong>IMDb:</strong> <span id="detailRating" class="text-amber-400 font-bold"></span></p>
+                                                                                                                                                                  </div>
+                                                                                                                                                                        </div>
+                                                                                                                                                                        
+                                                                                                                                                                              <div class="border-t border-gray-800 pt-3">
+                                                                                                                                                                                      <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Storyline</h4>
+                                                                                                                                                                                              <p id="detailPlot" class="text-xs text-gray-300 leading-relaxed"></p>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                    
+                                                                                                                                                                                                          <div class="pt-2">
+                                                                                                                                                                                                                  <a id="trailerLink" href="#" target="_blank" rel="noopener noreferrer" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow">
+                                                                                                                                                                                                                            <i class="fa-brands fa-youtube text-base"></i>
+                                                                                                                                                                                                                                      <span>Watch Trailer on YouTube</span>
+                                                                                                                                                                                                                                              </a>
+                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                          </div>
+                                                                                                                                                                                                                                                          -->
   <!-- REVIEWS MODAL -->
   <div id="reviewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-3">
     <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md p-4 text-left shadow-2xl">
@@ -240,6 +277,31 @@
       { title: "Stranger Things", type: "Series" },
       { title: "Breaking Bad", type: "Series" }
     ];
+        function openMovieDetails(imdbID) {
+                const movie = cachedMovies.find(m => m.imdbID === imdbID);
+                      if (!movie) return;
+
+                            document.getElementById('detailTitle').innerText = movie.Title;
+                                  document.getElementById('detailBadge').innerText = movie.category || (movie.Type === 'series' ? 'Series' : 'Movie');
+                                        document.getElementById('detailMeta').innerText = `${movie.Year} • ${movie.Runtime || 'N/A'} • ${movie.Rated || 'U/A'}`;
+                                              document.getElementById('detailPoster').src = (movie.Poster && movie.Poster !== 'N/A') ? movie.Poster : 'https://placehold.co/150x220/1f2937/white?text=No+Poster';
+                                                    document.getElementById('detailDirector').innerText = movie.Director || 'N/A';
+                                                          document.getElementById('detailActors').innerText = movie.Actors || 'N/A';
+                                                                document.getElementById('detailGenre').innerText = movie.Genre || 'N/A';
+                                                                      document.getElementById('detailRating').innerText = `★ ${movie.imdbRating || 'N/A'}`;
+                                                                            document.getElementById('detailPlot').innerText = movie.Plot && movie.Plot !== 'N/A' ? movie.Plot : 'Story description not available.';
+
+                                                                                  const trailerQuery = encodeURIComponent(`${movie.Title} ${movie.Year} official trailer`);
+                                                                                        document.getElementById('trailerLink').href = `https://www.youtube.com/results?search_query=${trailerQuery}`;
+
+                                                                                              document.getElementById('movieDetailsModal').classList.remove('hidden');
+                                                                                                  }
+
+                                                                                                      function closeDetailsModal() {
+                                                                                                            document.getElementById('movieDetailsModal').classList.add('hidden');
+                                                                                                                }
+
+        
     const policyTexts = {
               about: {
                       title: "About FlickMeter & GenreFlick",
@@ -346,8 +408,8 @@
 
         card.innerHTML = `
           <div>
-            <div class="relative bg-gray-800 aspect-[2/3]">
-              <img src="${poster}" alt="${movie.Title}" class="w-full h-full object-cover">
+            <div class="relative bg-gray-800 aspect-[2/3] cursor-pointer" onclick="openMovieDetails('${movie.imdbID}')">
+              
               <span class="absolute top-2 right-2 bg-black/80 text-amber-400 text-xs px-2 py-0.5 rounded font-bold">
                 ★ ${movie.imdbRating !== "N/A" ? movie.imdbRating : "N/A"}
               </span>
