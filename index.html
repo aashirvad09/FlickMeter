@@ -33,6 +33,25 @@
 
     <!-- ================= TAB 1: MOVIES FEED ================= -->
     <section id="section-feed">
+            <!-- Live Search Bar -->
+                  <div class="mb-5">
+                          <div class="relative flex items-center">
+                                    <i class="fa-solid fa-magnifying-glass absolute left-3 text-gray-500 text-xs"></i>
+                                              <input 
+                                                          type="text" 
+                                                                      id="movieSearchInput" 
+                                                                                  placeholder="Koi bhi movie search karein (e.g. Dangal, Batman)..." 
+                                                                                              class="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-24 py-2.5 text-xs text-white placeholder-gray-500 outline-none focus:border-red-500 transition shadow"
+                                                                                                          onkeydown="if(event.key === 'Enter') executeSearch()"
+                                                                                                                    />
+                                                                                                                              <button 
+                                                                                                                                          onclick="executeSearch()" 
+                                                                                                                                                      class="absolute right-1.5 bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold transition">
+                                                                                                                                                                  Search
+                                                                                                                                                                            </button>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                          </div>
+                                                                                                                                                                                          -->
       <!-- Genre Pills -->
       <div class="flex items-center space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
         <button onclick="filterByGenre('All')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap">All</button>
