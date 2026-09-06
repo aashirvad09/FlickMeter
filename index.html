@@ -2,109 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>FlickMeter - Public Movie Ratings & Buzz</title>
-        <!-- Tailwind CSS for Modern Styling -->
-          <script src="https://cdn.tailwindcss.com"></script>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-            </head>
-            <body class="bg-gray-950 text-gray-100 min-h-screen">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlickMeter - Public Movie Ratings & Buzz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
 
-              <!-- Header / Navbar -->
-                <header class="bg-gray-900/80 backdrop-blur sticky top-0 z-50 border-b border-gray-800 px-4 py-3">
-                    <div class="max-w-6xl mx-auto flex items-center justify-between">
-                          <div class="flex items-center space-x-2">
-                                  <i class="fa-solid fa-film text-red-500 text-2xl"></i>
-                                          <span class="text-2xl font-black tracking-wider text-white">FLICK<span class="text-red-500">METER</span></span>
-                                                </div>
-                                                      <div class="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full font-semibold">
-                                                              Live Public Verdict
-                                                                    </div>
-                                                                        </div>
-                                                                          </header>
+  <!-- Header -->
+  <header class="bg-gray-900/90 backdrop-blur sticky top-0 z-50 border-b border-gray-800 px-4 py-3">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-film text-red-500 text-2xl"></i>
+        <span class="text-2xl font-black tracking-wider text-white">FLICK<span class="text-red-500">METER</span></span>
+      </div>
+      <div class="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full font-semibold">
+        Live Public Verdict
+      </div>
+    </div>
+  </header>
 
-                                                                            <!-- Hero Section -->
-                                                                              <main class="max-w-6xl mx-auto px-4 py-6">
-                                                                                  <div class="mb-6">
-                                                                                        <h1 class="text-2xl font-bold tracking-tight text-white">Trending Movies</h1>
-                                                                                              <p class="text-sm text-gray-400">Apni pasandeeda movies ko rate karein aur public verdict dekhein.</p>
-                                                                                                  </div>
+  <!-- Main Feed -->
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-white">Trending Movies</h1>
+        <p class="text-sm text-gray-400">Rate karein aur apna verdict share karein.</p>
+      </div>
+    </div>
 
-                                                                                                      <!-- Movies Grid -->
-                                                                                                          <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                                                                                                <div class="text-gray-400 text-sm col-span-full text-center py-10">Movies load ho rahi hain...</div>
-                                                                                                                    </div>
-                                                                                                                      </main>
+    <!-- Movies Grid -->
+    <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div class="text-gray-400 text-sm col-span-full text-center py-10">
+        <i class="fa-solid fa-circle-notch fa-spin text-red-500 text-2xl mb-2"></i>
+        <p>Posters aur movies load ho rahi hain...</p>
+      </div>
+    </div>
+  </main>
 
-                                                                                                                        <!-- Script for TMDB API & Ratings -->
-                                                                                                                          <script>
-                                                                                                                              const API_KEY = '262cd1fa3f94f895e3ad51718dcced7f';
-                                                                                                                                  const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+  <script>
+    const API_KEY = '262cd1fa3f94f895e3ad51718dcced7f';
+    const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 
-                                                                                                                                      async function loadMovies() {
-                                                                                                                                            const grid = document.getElementById('moviesGrid');
-                                                                                                                                                  try {
-                                                                                                                                                          const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`);
-                                                                                                                                                                  const data = await response.json();
-                                                                                                                                                                          const movies = data.results;
+    async function loadMovies() {
+      const grid = document.getElementById('moviesGrid');
+      const targetUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
+      
+      // Free CORS proxy to bypass Indian ISP block
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
-                                                                                                                                                                                  grid.innerHTML = '';
+      try {
+        let response;
+        try {
+          response = await fetch(targetUrl);
+          if (!response.ok) throw new Error();
+        } catch (e) {
+          response = await fetch(proxyUrl);
+        }
 
-                                                                                                                                                                                          movies.forEach(movie => {
-                                                                                                                                                                                                    // Local storage se user ki saved rating nikalna
-                                                                                                                                                                                                              const savedRating = localStorage.getItem(`rating_${movie.id}`) || 'Not Rated';
+        const data = await response.json();
+        const movies = data.results || [];
 
-                                                                                                                                                                                                                        const card = document.createElement('div');
-                                                                                                                                                                                                                                  card.className = 'bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col justify-between shadow-lg hover:border-gray-700 transition';
+        if (movies.length === 0) throw new Error("No movies found");
 
-                                                                                                                                                                                                                                            card.innerHTML = `
-                                                                                                                                                                                                                                                        <div>
-                                                                                                                                                                                                                                                                      <div class="relative">
-                                                                                                                                                                                                                                                                                      <img src="${movie.poster_path ? IMAGE_BASE_URL + movie.poster_path : 'https://via.placeholder.com/500x750?text=No+Poster'}" 
-                                                                                                                                                                                                                                                                                                           alt="${movie.title}" class="w-full h-64 object-cover">
-                                                                                                                                                                                                                                                                                                                           <span class="absolute top-2 right-2 bg-black/80 text-amber-400 text-xs px-2 py-1 rounded font-bold">
-                                                                                                                                                                                                                                                                                                                                             ★ ${movie.vote_average.toFixed(1)}
-                                                                                                                                                                                                                                                                                                                                                             </span>
-                                                                                                                                                                                                                                                                                                                                                                           </div>
-                                                                                                                                                                                                                                                                                                                                                                                         <div class="p-3">
-                                                                                                                                                                                                                                                                                                                                                                                                         <h3 class="font-bold text-sm text-white truncate" title="${movie.title}">${movie.title}</h3>
-                                                                                                                                                                                                                                                                                                                                                                                                                         <p class="text-xs text-gray-400 mt-1">Released: ${movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                       </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                   </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <div class="p-3 pt-0 border-t border-gray-800/60 mt-2">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <div class="text-[11px] text-gray-400 mb-1 flex justify-between">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <span>Aapka Score:</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <span id="score-text-${movie.id}" class="text-red-400 font-bold">${savedRating}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     <div class="flex items-center space-x-1">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     <select id="select-${movie.id}" class="w-full bg-gray-800 text-xs text-gray-200 border border-gray-700 rounded px-1.5 py-1 outline-none">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <option value="">Rate Karein (1-10)</option>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ${[1,2,3,4,5,6,7,8,9,10].map(num => `<option value="${num}">★ ${num} / 10</option>`).join('')}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         </select>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <button onclick="saveRating(${movie.id})" class="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded font-semibold">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Save
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               `;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         grid.appendChild(card);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       } catch (error) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               grid.innerHTML = `<div class="text-red-400 text-sm col-span-full text-center py-10">Movies load karne me error aaya. Kripya reload karein.</div>`;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
+        grid.innerHTML = '';
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             function saveRating(movieId) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   const select = document.getElementById(`select-${movieId}`);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         const val = select.value;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               if (!val) return;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     localStorage.setItem(`rating_${movieId}`, `★ ${val}/10`);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           document.getElementById(`score-text-${movieId}`).innerText = `★ ${val}/10`;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }
+        movies.forEach(movie => {
+          const savedRating = localStorage.getItem(`rating_${movie.id}`) || 'Not Rated';
+          const poster = movie.poster_path ? `${IMAGE_BASE}${movie.poster_path}` : 'https://placehold.co/500x750/1f2937/white?text=No+Poster';
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   loadMovies();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     </script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+          const card = document.createElement('div');
+          card.className = 'bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col justify-between shadow-lg hover:border-gray-700 transition';
+
+          card.innerHTML = `
+            <div>
+              <div class="relative">
+                <img src="${poster}" alt="${movie.title}" class="w-full h-64 object-cover" loading="lazy">
+                <span class="absolute top-2 right-2 bg-black/85 text-amber-400 text-xs px-2 py-0.5 rounded-md font-bold shadow">
+                  ★ ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
+                </span>
+              </div>
+              <div class="p-3">
+                <h3 class="font-bold text-sm text-white truncate" title="${movie.title}">${movie.title}</h3>
+                <p class="text-xs text-gray-400 mt-1">${movie.release_date ? movie.release_date.split('-')[0] : '2026'}</p>
+              </div>
+            </div>
+            
+            <div class="p-3 pt-0 border-t border-gray-800/80 mt-2">
+              <div class="text-[11px] text-gray-400 mb-1 flex justify-between">
+                <span>Public Score:</span>
+                <span id="score-text-${movie.id}" class="text-red-400 font-bold">${savedRating}</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <select id="select-${movie.id}" class="w-full bg-gray-800 text-xs text-gray-200 border border-gray-700 rounded px-1.5 py-1 outline-none">
+                  <option value="">Rate (1-10)</option>
+                  ${[1,2,3,4,5,6,7,8,9,10].map(num => `<option value="${num}">★ ${num}/10</option>`).join('')}
+                </select>
+                <button onclick="saveRating(${movie.id})" class="bg-red-600 hover:bg-red-700 text-white text-xs px-2.5 py-1 rounded font-semibold transition">
+                  Save
+                </button>
+              </div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (error) {
+        grid.innerHTML = `
+          <div class="text-center col-span-full py-10">
+            <p class="text-red-400 text-sm mb-2">Network block ki wajah se movies load nahi ho payi.</p>
+            <button onclick="loadMovies()" class="bg-gray-800 text-xs px-3 py-1.5 rounded border border-gray-700 text-white hover:bg-gray-700">Retry Karein</button>
+          </div>
+        `;
+      }
+    }
+
+    function saveRating(movieId) {
+      const select = document.getElementById(`select-${movieId}`);
+      const val = select.value;
+      if (!val) return;
+      localStorage.setItem(`rating_${movieId}`, `★ ${val}/10`);
+      document.getElementById(`score-text-${movieId}`).innerText = `★ ${val}/10`;
+    }
+
+    loadMovies();
+  </script>
+</body>
+</html>
+
