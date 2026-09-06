@@ -11,32 +11,87 @@
 
 <body class="bg-gray-950 text-gray-100 min-h-screen pb-12">
 
-  <header class="bg-gray-900/90 border-b border-gray-800 sticky top-0 z-30 backdrop-blur px-4 py-3">
-    <div class="max-w-5xl mx-auto flex items-center justify-between">
+  <!-- NAVBAR -->
+  <header class="bg-gray-900/95 border-b border-gray-800 sticky top-0 z-30 backdrop-blur px-4 py-3">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center space-x-2">
         <i class="fa-solid fa-film text-red-500 text-2xl"></i>
         <span class="text-xl font-black tracking-wider text-white">FLICK<span class="text-red-500">METER</span></span>
       </div>
-      <span class="text-xs bg-red-950/80 text-red-400 border border-red-800 px-2.5 py-1 rounded-full font-medium">
-        Public Reviews
-      </span>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-1.5 text-xs font-semibold">
+        <button onclick="switchTab('feed')" id="nav-feed" class="px-3 py-1.5 rounded-full bg-red-600 text-white transition">Movies</button>
+        <button onclick="switchTab('ranking')" id="nav-ranking" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">Top Charts</button>
+        <button onclick="switchTab('stars')" id="nav-stars" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">Stars</button>
+        <button onclick="switchTab('news')" id="nav-news" class="px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition">News</button>
+      </nav>
     </div>
   </header>
 
   <main class="max-w-5xl mx-auto px-4 py-6">
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-white">Trending Movies</h1>
-      <p class="text-xs text-gray-400 mt-1">Apna score rate karein aur audience reviews padhein.</p>
-    </div>
 
-    <div id="moviesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      <div class="col-span-full text-center py-16 text-gray-400 text-sm">
-        <i class="fa-solid fa-circle-notch fa-spin text-red-500 text-2xl mb-2"></i>
-        <p>Posters aur reviews load ho rahe hain...</p>
+    <!-- ================= TAB 1: MOVIES FEED ================= -->
+    <section id="section-feed">
+      <!-- Genre Pills -->
+      <div class="flex items-center space-x-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
+        <button onclick="filterByGenre('All')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap">All</button>
+        <button onclick="filterByGenre('Comedy')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Comedy</button>
+        <button onclick="filterByGenre('Action')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Action</button>
+        <button onclick="filterByGenre('Drama')" class="genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap">Drama</button>
       </div>
-    </div>
+
+      <!-- Movies Grid -->
+      <div id="moviesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div class="col-span-full text-center py-16 text-gray-400 text-sm">
+          <i class="fa-solid fa-circle-notch fa-spin text-red-500 text-2xl mb-2"></i>
+          <p>Movies load ho rahi hain...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: TOP CHARTS & RANKINGS ================= -->
+    <section id="section-ranking" class="hidden">
+      <div class="mb-4">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-amber-400"></i> Overall Top Rated Movies
+        </h2>
+        <p class="text-xs text-gray-400">IMDb aur Public rating ke aadhar par top rank list</p>
+      </div>
+      <div id="rankingContainer" class="space-y-3">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: POPULAR STARS ================= -->
+    <section id="section-stars" class="hidden">
+      <div class="mb-4">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-star text-yellow-400"></i> Top Indian Stars
+        </h2>
+        <p class="text-xs text-gray-400">Leading actors & actresses of Indian cinema</p>
+      </div>
+      <div id="starsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: LATEST NEWS ================= -->
+    <section id="section-news" class="hidden">
+      <div class="mb-4">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-newspaper text-red-500"></i> Cinema Buzz & Updates
+        </h2>
+        <p class="text-xs text-gray-400">Bollywood, South & Hindi Cinema ki taaza khabrein</p>
+      </div>
+      <div id="newsContainer" class="space-y-3">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
   </main>
 
+  <!-- REVIEWS POPUP (MODAL) -->
   <div id="reviewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-3">
     <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md p-4 text-left shadow-2xl">
       <div class="flex justify-between items-center mb-3">
@@ -46,8 +101,7 @@
         </button>
       </div>
 
-      <div id="commentsContainer" class="max-h-52 overflow-y-auto space-y-2 mb-4 pr-1 text-xs">
-        </div>
+      <div id="commentsContainer" class="max-h-52 overflow-y-auto space-y-2 mb-4 pr-1 text-xs"></div>
 
       <div class="space-y-2 pt-2 border-t border-gray-800">
         <input id="commentAuthor" type="text" placeholder="Aapka Naam" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-red-500" />
@@ -62,7 +116,7 @@
   <script>
     const API_KEY = "trilogy";
 
-    const initialMovies = [
+    const movieTitles = [
       "Stree 2",
       "Jawan",
       "Animal",
@@ -73,30 +127,40 @@
       "Dangal"
     ];
 
+    const starsData = [
+      { name: "Shah Rukh Khan", title: "King of Bollywood", hits: "Jawan, Pathaan, DDLJ", img: "https://placehold.co/200x200/1e293b/white?text=SRK" },
+      { name: "Shraddha Kapoor", title: "Stree Sensation", hits: "Stree 2, Chhichhore", img: "https://placehold.co/200x200/1e293b/white?text=Shraddha" },
+      { name: "Ranbir Kapoor", title: "Power Performer", hits: "Animal, Sanju, Rockstar", img: "https://placehold.co/200x200/1e293b/white?text=Ranbir" },
+      { name: "Allu Arjun", title: "Icon Star", hits: "Pushpa 1 & 2", img: "https://placehold.co/200x200/1e293b/white?text=Allu+Arjun" }
+    ];
+
+    const newsData = [
+      { tag: "Box Office", title: "Stree 2 bani all-time blockbuster", desc: "Rajkummar Rao aur Shraddha Kapoor ki horror-comedy ne banaye historic records.", time: "Today" },
+      { tag: "Big Update", title: "KGF aur Salaar Universe aage badhega", desc: "Prashanth Neel ne aage ke visual spectacles par kaam shuru kiya.", time: "Yesterday" },
+      { tag: "Production", title: "12th Fail ko mila audience ka sabse zyada pyaar", desc: "Vikrant Massey ki biopic IMDb par top-rated Indian film bani.", time: "3 Days ago" }
+    ];
+
+    let cachedMovies = [];
     let currentMovieId = null;
 
-    async function getMovie(title) {
-      try {
-        const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${API_KEY}`);
-        const data = await res.json();
-        return data.Response === "True" ? data : null;
-      } catch (err) {
-        return null;
+    async function fetchAllMovies() {
+      cachedMovies = [];
+      for (const t of movieTitles) {
+        try {
+          const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(t)}&apikey=${API_KEY}`);
+          const data = await res.json();
+          if (data.Response === "True") cachedMovies.push(data);
+        } catch (e) {}
       }
+      renderMovies(cachedMovies);
     }
 
-    async function renderGrid() {
+    function renderMovies(list) {
       const container = document.getElementById("moviesContainer");
       container.innerHTML = "";
 
-      for (const title of initialMovies) {
-        const movie = await getMovie(title);
-        if (!movie) continue;
-
-        const posterSrc = (movie.Poster && movie.Poster !== "N/A") 
-          ? movie.Poster 
-          : `https://placehold.co/400x600/1f2937/white?text=${encodeURIComponent(movie.Title)}`;
-
+      list.forEach(movie => {
+        const poster = (movie.Poster && movie.Poster !== "N/A") ? movie.Poster : `https://placehold.co/400x600/1f2937/white?text=${encodeURIComponent(movie.Title)}`;
         const userScore = localStorage.getItem(`score_${movie.imdbID}`) || "Not Rated";
 
         const card = document.createElement("div");
@@ -105,7 +169,7 @@
         card.innerHTML = `
           <div>
             <div class="relative bg-gray-800 aspect-[2/3]">
-              <img src="${posterSrc}" alt="${movie.Title}" class="w-full h-full object-cover">
+              <img src="${poster}" alt="${movie.Title}" class="w-full h-full object-cover">
               <span class="absolute top-2 right-2 bg-black/80 text-amber-400 text-xs px-2 py-0.5 rounded font-bold">
                 ★ ${movie.imdbRating !== "N/A" ? movie.imdbRating : "N/A"}
               </span>
@@ -133,26 +197,112 @@
               </button>
             </div>
 
-            <button onclick="openReviewModal('${movie.imdbID}', '${movie.Title.replace(/'/g, "\\'")}')" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs py-1.5 rounded flex items-center justify-center gap-1 transition">
+            <button onclick="openReviewModal('${movie.imdbID}', '${movie.Title.replace(/'/g, "\\'")}')" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs py-1.5 rounded flex items-center justify-center gap-1">
               <i class="fa-regular fa-comment-dots"></i> Reviews
             </button>
           </div>
         `;
-
         container.appendChild(card);
+      });
+    }
+
+    function filterByGenre(genre) {
+      document.querySelectorAll('.genre-pill').forEach(btn => {
+        if (btn.innerText.trim() === genre) {
+          btn.className = 'genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white whitespace-nowrap';
+        } else {
+          btn.className = 'genre-pill px-3 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 whitespace-nowrap';
+        }
+      });
+
+      if (genre === 'All') {
+        renderMovies(cachedMovies);
+      } else {
+        const filtered = cachedMovies.filter(m => m.Genre && m.Genre.toLowerCase().includes(genre.toLowerCase()));
+        renderMovies(filtered);
       }
     }
 
-    // Rating Logic
-    function recordRating(imdbId) {
-      const picker = document.getElementById(`rate-picker-${imdbId}`);
-      const val = picker.value;
-      if (!val) return;
-      localStorage.setItem(`score_${imdbId}`, `★ ${val}/10`);
-      document.getElementById(`score-display-${imdbId}`).innerText = `★ ${val}/10`;
+    function renderRankings() {
+      const container = document.getElementById("rankingContainer");
+      container.innerHTML = "";
+      const sorted = [...cachedMovies].sort((a, b) => parseFloat(b.imdbRating || 0) - parseFloat(a.imdbRating || 0));
+
+      sorted.forEach((m, idx) => {
+        const row = document.createElement("div");
+        row.className = "bg-gray-900 border border-gray-800 p-3 rounded-xl flex items-center justify-between";
+        row.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-base font-black ${idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-gray-300' : idx === 2 ? 'text-amber-600' : 'text-gray-500'} w-6">#${idx+1}</span>
+            <div>
+              <h4 class="text-sm font-bold text-white">${m.Title}</h4>
+              <p class="text-[11px] text-gray-400">${m.Genre ? m.Genre.split(',')[0] : 'Movie'} • ${m.Year}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-amber-400 font-bold text-sm">★ ${m.imdbRating}</span>
+            <p class="text-[10px] text-gray-500">${m.imdbVotes} votes</p>
+          </div>
+        `;
+        container.appendChild(row);
+      });
     }
 
-    // Modal & Review Logic
+    function renderStars() {
+      const container = document.getElementById("starsContainer");
+      container.innerHTML = "";
+      starsData.forEach(s => {
+        const div = document.createElement("div");
+        div.className = "bg-gray-900 border border-gray-800 p-3 rounded-xl text-center";
+        div.innerHTML = `
+          <img src="${s.img}" alt="${s.name}" class="w-16 h-16 rounded-full mx-auto mb-2 border border-red-500/50 object-cover">
+          <h4 class="font-bold text-sm text-white">${s.name}</h4>
+          <p class="text-[10px] text-red-400 font-medium mb-1">${s.title}</p>
+          <p class="text-[11px] text-gray-400">${s.hits}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderNews() {
+      const container = document.getElementById("newsContainer");
+      container.innerHTML = "";
+      newsData.forEach(n => {
+        const div = document.createElement("div");
+        div.className = "bg-gray-900 border border-gray-800 p-3.5 rounded-xl";
+        div.innerHTML = `
+          <div class="flex justify-between text-[10px] mb-1">
+            <span class="text-red-400 font-bold uppercase bg-red-950/60 border border-red-900 px-2 py-0.5 rounded">${n.tag}</span>
+            <span class="text-gray-500">${n.time}</span>
+          </div>
+          <h4 class="text-sm font-bold text-white mb-1">${n.title}</h4>
+          <p class="text-xs text-gray-400">${n.desc}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function switchTab(tab) {
+      ['feed', 'ranking', 'stars', 'news'].forEach(t => {
+        document.getElementById(`section-${t}`).classList.add('hidden');
+        document.getElementById(`nav-${t}`).className = 'px-3 py-1.5 rounded-full bg-gray-800 text-gray-300 transition';
+      });
+
+      document.getElementById(`section-${tab}`).classList.remove('hidden');
+      document.getElementById(`nav-${tab}`).className = 'px-3 py-1.5 rounded-full bg-red-600 text-white transition';
+
+      if (tab === 'ranking') renderRankings();
+      if (tab === 'stars') renderStars();
+      if (tab === 'news') renderNews();
+    }
+
+    function recordRating(imdbId) {
+      const picker = document.getElementById(`rate-picker-${imdbId}`);
+      if (!picker.value) return;
+      localStorage.setItem(`score_${imdbId}`, `★ ${picker.value}/10`);
+      document.getElementById(`score-display-${imdbId}`).innerText = `★ ${picker.value}/10`;
+    }
+
     function openReviewModal(imdbId, title) {
       currentMovieId = imdbId;
       document.getElementById("modalTitle").innerText = `${title} Reviews`;
@@ -167,12 +317,10 @@
     function displayReviews(imdbId) {
       const container = document.getElementById("commentsContainer");
       const list = JSON.parse(localStorage.getItem(`reviews_${imdbId}`) || "[]");
-
       if (list.length === 0) {
         container.innerHTML = `<p class="text-gray-500 text-center py-6">Abhi tak koi review nahi aaya. Aap pehla review likhein!</p>`;
         return;
       }
-
       container.innerHTML = list.map(item => `
         <div class="bg-gray-800/60 border border-gray-700/50 p-2.5 rounded-lg">
           <div class="flex justify-between text-[10px] text-gray-400 mb-1">
@@ -185,28 +333,18 @@
     }
 
     function submitReview() {
-      const authorInput = document.getElementById("commentAuthor");
-      const bodyInput = document.getElementById("commentBody");
-
-      const author = authorInput.value.trim() || "Cinema Lover";
-      const body = bodyInput.value.trim();
-
+      const author = document.getElementById("commentAuthor").value.trim() || "Cinema Lover";
+      const body = document.getElementById("commentBody").value.trim();
       if (!body) return;
 
       const list = JSON.parse(localStorage.getItem(`reviews_${currentMovieId}`) || "[]");
-      list.unshift({
-        name: author,
-        text: body,
-        date: "Abhi-abhi"
-      });
-
+      list.unshift({ name: author, text: body, date: "Abhi-abhi" });
       localStorage.setItem(`reviews_${currentMovieId}`, JSON.stringify(list));
-      bodyInput.value = "";
+      document.getElementById("commentBody").value = "";
       displayReviews(currentMovieId);
     }
 
-    renderGrid();
+    fetchAllMovies();
   </script>
-
 </body>
 </html>
