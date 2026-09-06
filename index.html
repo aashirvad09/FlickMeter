@@ -386,7 +386,36 @@
       document.getElementById("commentBody").value = "";
       displayReviews(currentMovieId);
     }
+    async function executeSearch() {
+            const input = document.getElementById("movieSearchInput");
+                  const query = input.value.trim();
+                        if (!query) {
+                                renderMovies(cachedMovies);
+                                        return;
+                                              }
 
+                                                    const container = document.getElementById("moviesContainer");
+                                                          container.innerHTML = `
+                                                                  <div class="col-span-full text-center py-10 text-gray-400 text-xs">
+                                                                            <i class="fa-solid fa-spinner fa-spin text-red-500 text-lg mb-2"></i>
+                                                                                      <p>"${query}" khoja ja raha hai...</p>
+                                                                                              </div>
+                                                                                                    `;
+
+                                                                                                          try {
+                                                                                                                  const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(query)}&apikey=${API_KEY}`);
+                                                                                                                          const data = await res.json();
+                                                                                                                                  if (data.Response === "True") {
+                                                                                                                                            renderMovies([data]);
+                                                                                                                                                    } else {
+                                                                                                                                                              container.innerHTML = `<p class="col-span-full text-center text-red-400 py-10 text-xs">"${query}" naam ki movie nahi mili.</p>`;
+                                                                                                                                                                      }
+                                                                                                                                                                            } catch (err) {
+                                                                                                                                                                                    container.innerHTML = `<p class="col-span-full text-center text-red-400 py-10 text-xs">Search karne me dikkat hui.</p>`;
+                                                                                                                                                                                          }
+                                                                                                                                                                                              }
+                                                                                                                                                                                              
+    }
     fetchAllMovies();
   </script>
 </body>
