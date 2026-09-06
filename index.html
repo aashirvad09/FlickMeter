@@ -397,6 +397,62 @@
                                                               cachedMovies = results.filter(m => m && m.Response === "True");
                                                                     renderMovies(cachedMovies);
         }
+            async function executeSearch() {
+                    const input = document.getElementById("movieSearchInput");
+                          const query = input.value.trim();
+
+                                if (!query) {
+                                        renderMovies(cachedMovies);
+                                                return;
+                                                      }
+
+                                                            switchTab('feed');
+
+                                                                  const container = document.getElementById("moviesContainer");
+                                                                        container.innerHTML = `
+                                                                                <div class="col-span-full text-center py-12 text-gray-400 text-xs">
+                                                                                          <i class="fa-solid fa-spinner fa-spin text-red-500 text-xl mb-2"></i>
+                                                                                                    <p>"${query}" khoja ja raha hai...</p>
+                                                                                                            </div>
+                                                                                                                  `;
+
+                                                                                                                        try {
+                                                                                                                                let res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(query)}&apikey=${API_KEY}`);
+                                                                                                                                        let data = await res.json();
+
+                                                                                                                                                if (data.Response === "True") {
+                                                                                                                                                          renderMovies([data]);
+                                                                                                                                                                    return;
+                                                                                                                                                                            }
+
+                                                                                                                                                                                    res = await fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&apikey=${API_KEY}`);
+                                                                                                                                                                                            data = await res.json();
+
+                                                                                                                                                                                                    if (data.Response === "True" && data.Search && data.Search.length > 0) {
+                                                                                                                                                                                                              const detailPromises = data.Search.slice(0, 4).map(item =>
+                                                                                                                                                                                                                          fetch(`https://www.omdbapi.com/?i=${item.imdbID}&apikey=${API_KEY}`)
+                                                                                                                                                                                                                                        .then(r => r.json())
+                                                                                                                                                                                                                                                      .catch(() => null)
+                                                                                                                                                                                                                                                                );
+                                                                                                                                                                                                                                                                          const detailedList = (await Promise.all(detailPromises)).filter(m => m && m.Response === "True");
+                                                                                                                                                                                                                                                                                    renderMovies(detailedList);
+                                                                                                                                                                                                                                                                                            } else {
+                                                                                                                                                                                                                                                                                                      container.innerHTML = `
+                                                                                                                                                                                                                                                                                                                  <div class="col-span-full text-center py-12 text-gray-400 text-xs space-y-2">
+                                                                                                                                                                                                                                                                                                                                <i class="fa-regular fa-face-frown text-red-500 text-2xl"></i>
+                                                                                                                                                                                                                                                                                                                                              <p class="text-red-400 font-semibold">"${query}" naam ki koi movie nahi mili.</p>
+                                                                                                                                                                                                                                                                                                                                                            <button onclick="renderMovies(cachedMovies)" class="bg-gray-800 text-white px-3 py-1 rounded text-[11px] hover:bg-gray-700">
+                                                                                                                                                                                                                                                                                                                                                                            Wapas Saari Movies Dikhayein
+                                                                                                                                                                                                                                                                                                                                                                                          </button>
+                                                                                                                                                                                                                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                              } catch (err) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                      container.innerHTML = `<p class="col-span-full text-center text-red-400 py-10 text-xs">Network issue ke karan search nahi ho paya.</p>`;
+                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+
+            
     fetchAllMovies();
   </script>
 </body>
